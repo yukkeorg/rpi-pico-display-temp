@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "boards/pico.h"
 #include "hardware/structs/i2c.h"
@@ -11,6 +12,12 @@
 
 #define SZ(d) ((size_t)(sizeof(d)/sizeof(d[0])))
 
+const uint8_t ADT7410_CONFIG[1] = {0x80};
+const uint8_t ADT7410_I2C_ADDR = 0x48;  // 72
+
+const uint AD7410_I2C_SDA_PIN = 24;
+const uint AD7410_I2C_SCL_PIN = 25;
+
 
 static void system_init()
 {
@@ -22,10 +29,10 @@ static void system_init()
 
     // init i2c
     i2c_init(i2c0, 100000);
-    gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
-    gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
+    gpio_set_function(AD7410_I2C_SDA_PIN, GPIO_FUNC_I2C);
+    gpio_set_function(AD7410_I2C_SCL_PIN, GPIO_FUNC_I2C);
+    gpio_pull_up(AD7410_I2C_SDA_PIN);
+    gpio_pull_up(AD7410_I2C_SCL_PIN);
 }
 
 static void init_adt7410(i2c_inst_t *i2c, uint8_t addr)
@@ -34,28 +41,45 @@ static void init_adt7410(i2c_inst_t *i2c, uint8_t addr)
     i2c_write_blocking(i2c, addr, init_data, SZ(init_data), false);
 }
 
-static void i2c_writeto_mem(i2c_inst_t *i2c, uint8_t addr, uint8_t regaddr, uint8_t *buf, size_t len)
+#define MAX_LEN (256 + 1)
+static void i2c_writeto_mem(i2c_inst_t *i2c, uint8_t i2c_addr, uint8_t regaddr, const uint8_t *buf, size_t len)
 {
-    i2c_write_blocking(i2c, addr, &regaddr, 1, false);
-    i2c_write_blocking(i2c, addr, buf, len, false);
+    uint8_t tmp[MAX_LEN] = {0};
+
+    if(len > (MAX_LEN - 1)) return;
+
+    tmp[0] = regaddr;
+    memcpy(&tmp[1], buf, len);
+    i2c_write_blocking(i2c, i2c_addr, tmp, len+1, true);
 }
 
-static void i2c_readfrom_mem(i2c_inst_t *i2c, uint8_t addr, uint8_t regaddr, uint8_t *buf, size_t len)
+static void i2c_readfrom_mem(i2c_inst_t *i2c, uint8_t i2c_addr, uint8_t regaddr, uint8_t *buf, size_t len)
 {
-    i2c_write_blocking(i2c, addr, &regaddr, 1, false);
-    i2c_read_blocking(i2c, addr, buf, len, false);
+    regaddr |= 0x80;
+    i2c_write_blocking(i2c, i2c_addr, &regaddr, 1, true);
+    i2c_read_blocking(i2c, i2c_addr, buf, len, false);
 }
 
 int main(void)
 {
     system_init();
-    init_adt7410(i2c0, 72);
+    init_adt7410(i2c0, ADT7410_I2C_ADDR);
+
+    i2c_writeto_mem(i2c0, ADT7410_I2C_ADDR, 0x03, ADT7410_CONFIG, 1);
+
+    uint8_t buf[2] = {0};
+    int32_t data = 0;
+    double temp = 0.0;
 
     while(true) {
-        gpio_put(PICO_DEFAULT_LED_PIN, 1);
-        sleep_ms(200);
-        gpio_put(PICO_DEFAULT_LED_PIN, 0);
-        sleep_ms(300);
+        i2c_readfrom_mem(i2c0, ADT7410_I2C_ADDR, 0x00, buf, 2);
+        data = (int32_t)buf[0] << 8 | buf[1];
+        if (data > 0x8000) {
+            data = data - 65536;
+        }
+        temp = (double)data / 128.0;
+        printf("%f\n", temp);
+        sleep_ms(1000);
     }
 
     return 0;

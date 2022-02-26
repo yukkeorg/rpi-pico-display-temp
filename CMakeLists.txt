@@ -10,6 +10,9 @@ pico_sdk_init()
 
 add_executable(${PROJECT_NAME}
     main.c
+    i2c_util.c
+    adt7410.c
+    so1602a.c
 )
 
 target_link_libraries(${PROJECT_NAME}

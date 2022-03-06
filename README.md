@@ -11,7 +11,7 @@
 * [The SDK](https://www.raspberrypi.com/documentation/microcontrollers/c_sdk.html) の [Your First Binaries](https://www.raspberrypi.com/documentation/microcontrollers/c_sdk.html#your-first-binaries) を参照し、Raspberry Pi Pico でプログラムを動作させる方法について確認しておきます。
 
 * [Getting started with Raspberry Pi Pico](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf)の
-   **Chapter 1. Quick Pico Setup** または、**Chapter 2. The SDK **のいずれかを参照して、Raspberry Pi Pico 開発環境を準備します。
+   **Chapter 1. Quick Pico Setup** または、**Chapter 2. The SDK**のいずれかを参照して、Raspberry Pi Pico 開発環境を準備します。
 
 
 ## Build Binary

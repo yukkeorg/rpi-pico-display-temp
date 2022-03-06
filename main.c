@@ -20,21 +20,20 @@ static void system_init()
 
     i2c_setup(i2c0, I2C_SDA_PIN, I2C_SCL_PIN, 400000);
     adt7410_set_config(i2c0, ADT7410_I2C_ADDR, ADT7410_CONFIG);
-    so1602a_setup(i2c0, SO1602A_I2C_ADDR);
+    so1602a_setup(i2c0, SO1602A_I2C_ADDR, SO1602A_DEFAULT);
 }
 
 int main(void)
 {
-    char buf[128] = {0x00};
-
     system_init();
 
+    char buf[32] = {0x00};
     double temp = 0.0;
     while(true) {
         temp = adt7410_get_temprature(i2c0, ADT7410_I2C_ADDR);
-        sprintf(buf, "%f", temp);
+        sprintf(buf, "%+3.2f\xF2\x43", temp); // +NN.NN℃
         puts(buf);
-        so1602a_set_command(i2c0, SO1602A_I2C_ADDR, 0x01);
+        so1602a_set_position(i2c0, SO1602A_I2C_ADDR, 0x20);
         so1602a_send_data(i2c0, SO1602A_I2C_ADDR, buf, (size_t)strlen(buf));
         sleep_ms(1000);
     }

@@ -23,14 +23,18 @@ void so1602a_send_data(i2c_inst_t *i2c, uint8_t i2c_addr, uint8_t *data, size_t 
     }
 }
 
-void so1602a_setup(i2c_inst_t *i2c, uint8_t i2c_addr)
+void so1602a_set_position(i2c_inst_t *i2c, uint8_t i2c_addr, uint8_t addr) {
+    so1602a_set_command(i2c, i2c_addr, 0x80|addr);
+}
+
+void so1602a_setup(i2c_inst_t *i2c, uint8_t i2c_addr, uint8_t config)
 {
     sleep_ms(100);
     so1602a_set_command(i2c, i2c_addr, 0x01);
     sleep_ms(20);
     so1602a_set_command(i2c, i2c_addr, 0x02);
     sleep_ms(2);
-    so1602a_set_command(i2c, i2c_addr, 0x0C);
+    so1602a_set_command(i2c, i2c_addr, config);
     sleep_ms(2);
     so1602a_set_command(i2c, i2c_addr, 0x01);
     sleep_ms(20);

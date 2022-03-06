@@ -33,7 +33,12 @@ int main(void)
         temp = adt7410_get_temprature(i2c0, ADT7410_I2C_ADDR);
         sprintf(buf, "%+3.2f\xF2\x43", temp); // +NN.NN℃
         puts(buf);
-        so1602a_set_position(i2c0, SO1602A_I2C_ADDR, 0x20);
+
+        //
+        so1602a_set_position(i2c0, SO1602A_I2C_ADDR, 0x00);
+        so1602a_send_data(i2c0, SO1602A_I2C_ADDR, (uint8_t *)"Temperature:", 12);
+
+        so1602a_set_position(i2c0, SO1602A_I2C_ADDR, 0x28);
         so1602a_send_data(i2c0, SO1602A_I2C_ADDR, buf, (size_t)strlen(buf));
         sleep_ms(1000);
     }

@@ -23,4 +23,3 @@ target_link_libraries(${PROJECT_NAME}
 pico_add_extra_outputs(${PROJECT_NAME})
 pico_enable_stdio_usb(${PROJECT_NAME} ON)
 pico_enable_stdio_uart(${PROJECT_NAME} OFF)
-

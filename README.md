@@ -3,8 +3,8 @@
 ## Used Hardwares
 
 * Raspberry Pi Pico or RP2040 Compatible board.
-* SO1602 16x2 OLED Charactor Display (I2C connection model)
-* ADT7410 High Resolution Tempreture Sensor (I2C connection model)
+* SO1602 16x2 OLED Character Display Module (I2C connection model)
+* ADT7410 High Resolution Tempreture Sensor Module (I2C connection model)
 
 ## Preparation
 

@@ -16,24 +16,26 @@
 
 ## Build Binary
 
+_以下の手順はUbuntu上で行っています。_
+
 1. このリポジトリをクローンして、クローンしたディレクトリに移動します。
-   '''
+   ```
    $ git clone https://github.com/yukkeorg/rpi-pico-display-temp.git
    $ cd rpi-pico-display-temp
-   '''
+   ```
 2. `build`ディレクトリを作成してディレクトリをそこに移動します。、
-   '''
+   ```
    $ mkdir build
    $ cmake ..
-   '''
+   ```
 3. `cmake`コマンドを実行してビルド環境を整えます。
-   '''
+   ```
    $ cmake -DPICO_SDK_PATH=<path-to-sdk> ..
-   '''
+   ```
 4. `ninja`コマンドでビルドします。ビルドが成功すると`showtemp.uf2`が作成されます。
-   '''
+   ```
    $ ninja
-   '''
+   ```
 
 ## Hardware setup
 

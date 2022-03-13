@@ -1,5 +1,7 @@
 # Display tempreture with Raspberry Pi Pico
 
+![setup](resources/showtemp.jpg)
+
 ## Used Hardwares
 
 * Raspberry Pi Pico or RP2040 Compatible board.
@@ -13,28 +15,34 @@
 * [Getting started with Raspberry Pi Pico](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf)の
    **Chapter 1. Quick Pico Setup** または、**Chapter 2. The SDK**のいずれかを参照して、Raspberry Pi Pico 開発環境を準備します。
 
-
 ## Build Binary
 
 _以下の手順はUbuntu上で行っています。_
 
 1. このリポジトリをクローンして、クローンしたディレクトリに移動します。
+
+   ``` sh
+   git clone https://github.com/yukkeorg/rpi-pico-display-temp.git
+   cd rpi-pico-display-temp
    ```
-   $ git clone https://github.com/yukkeorg/rpi-pico-display-temp.git
-   $ cd rpi-pico-display-temp
-   ```
+
 2. `build`ディレクトリを作成してディレクトリをそこに移動します。、
+
+   ``` sh
+   mkdir build
+   cmake ..
    ```
-   $ mkdir build
-   $ cmake ..
-   ```
+
 3. `cmake`コマンドを実行してビルド環境を整えます。
+
+   ``` sh
+   cmake -DPICO_SDK_PATH=<path-to-sdk> ..
    ```
-   $ cmake -DPICO_SDK_PATH=<path-to-sdk> ..
-   ```
+
 4. `ninja`コマンドでビルドします。ビルドが成功すると`showtemp.uf2`が作成されます。
-   ```
-   $ ninja
+
+   ``` sh
+   ninja
    ```
 
 ## Hardware setup

@@ -1,4 +1,4 @@
-# Display tempreture with Raspberry Pi Pico
+# Display tempereture with Raspberry Pi Pico
 
 ![setup](resources/showtemp.jpg)
 

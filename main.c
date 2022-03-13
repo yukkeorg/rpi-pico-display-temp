@@ -21,7 +21,9 @@ int main(void)
     sensor = adt7410_open(i2c0, ADT7410_I2C_ADDR);
     adt7410_set_config(sensor, ADT7410_CONFIG);
 
-    so1602a_setup(i2c0, SO1602A_I2C_ADDR, SO1602A_CONFIG);
+    struct so1602a_t *display = NULL;
+    display = so1602a_open(i2c0, SO1602A_I2C_ADDR);
+    so1602a_setup(display, SO1602A_CONFIG);
 
     char indicator[] = {'O', 'o'};
     char buf[32] = {0x00};
@@ -36,14 +38,14 @@ int main(void)
         }
 
         //
-        so1602a_set_position(i2c0, SO1602A_I2C_ADDR, 0x00);
-        so1602a_send_data(i2c0, SO1602A_I2C_ADDR, (uint8_t *)"Temperature:", 12);
+        so1602a_set_position(display, 0x00);
+        so1602a_send_data(display, (uint8_t *)"Temperature:", 12);
 
-        so1602a_set_position(i2c0, SO1602A_I2C_ADDR, 0x0F);
-        so1602a_send_data(i2c0, SO1602A_I2C_ADDR, (uint8_t *)&indicator[(c & 1)], 1);
+        so1602a_set_position(display, 0x0F);
+        so1602a_send_data(display, (uint8_t *)&indicator[(c & 1)], 1);
 
-        so1602a_set_position(i2c0, SO1602A_I2C_ADDR, 0x28);
-        so1602a_send_data(i2c0, SO1602A_I2C_ADDR, buf, (size_t)strlen(buf));
+        so1602a_set_position(display, 0x28);
+        so1602a_send_data(display, buf, (size_t)strlen(buf));
 
         //
         sleep_ms(1000);
@@ -51,6 +53,7 @@ int main(void)
     }
 
     adt7410_close(sensor);
+    so1602a_close(display);
 
     return 0;
 }

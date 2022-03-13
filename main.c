@@ -11,18 +11,17 @@
 #include "so1602a.h"
 
 
-static void system_init()
+int main(void)
 {
     stdio_init_all();
 
     i2c_setup(i2c0, I2C_SDA_PIN, I2C_SCL_PIN, 400000);
-    adt7410_set_config(i2c0, ADT7410_I2C_ADDR, ADT7410_CONFIG);
-    so1602a_setup(i2c0, SO1602A_I2C_ADDR, SO1602A_CONFIG);
-}
 
-int main(void)
-{
-    system_init();
+    struct adt7410_t *sensor = NULL;
+    sensor = adt7410_open(i2c0, ADT7410_I2C_ADDR);
+    adt7410_set_config(sensor, ADT7410_CONFIG);
+
+    so1602a_setup(i2c0, SO1602A_I2C_ADDR, SO1602A_CONFIG);
 
     char indicator[] = {'O', 'o'};
     char buf[32] = {0x00};
@@ -31,7 +30,7 @@ int main(void)
 
     while(true) {
         if((c & 0x03) == 0) {
-            temp = adt7410_get_temprature(i2c0, ADT7410_I2C_ADDR);
+            temp = adt7410_get_temprature(sensor);
             sprintf(buf, "%+3.2f\xF2\x43", temp); // +NN.NN℃
             puts(buf);
         }
@@ -50,6 +49,8 @@ int main(void)
         sleep_ms(1000);
         c++;
     }
+
+    adt7410_close(sensor);
 
     return 0;
 }

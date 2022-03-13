@@ -28,10 +28,13 @@ int main(void)
     char buf[32] = {0x00};
     double temp = 0.0;
     uint32_t c = 0;
+
     while(true) {
-        temp = adt7410_get_temprature(i2c0, ADT7410_I2C_ADDR);
-        sprintf(buf, "%+3.2f\xF2\x43", temp); // +NN.NN℃
-        puts(buf);
+        if((c & 0x03) == 0) {
+            temp = adt7410_get_temprature(i2c0, ADT7410_I2C_ADDR);
+            sprintf(buf, "%+3.2f\xF2\x43", temp); // +NN.NN℃
+            puts(buf);
+        }
 
         //
         so1602a_set_position(i2c0, SO1602A_I2C_ADDR, 0x00);

@@ -48,3 +48,7 @@ _以下の手順はUbuntu上で行っています。_
 ## Hardware setup
 
 1. Raspberry Pi PicoのGPIO24をSDA、GPIO25をSCLとして、SO1602、ADT7410をI2C接続します。
+
+## LICENSE
+
+MIT

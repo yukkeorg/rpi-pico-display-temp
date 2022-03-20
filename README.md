@@ -30,13 +30,13 @@ _以下の手順はUbuntu上で行っています。_
 
    ``` sh
    mkdir build
-   cmake ..
+   cd build
    ```
 
 3. `cmake`コマンドを実行してビルド環境を整えます。
 
    ``` sh
-   cmake -DPICO_SDK_PATH=<path-to-sdk> ..
+   cmake -DPICO_SDK_PATH=<path-to-sdk> -G Ninja ..
    ```
 
 4. `ninja`コマンドでビルドします。ビルドが成功すると`showtemp.uf2`が作成されます。

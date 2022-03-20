@@ -10,6 +10,11 @@
 #include "adt7410.h"
 #include "so1602a.h"
 
+enum status {
+    INIT,
+    RUNNING
+};
+
 
 int main(void)
 {
@@ -25,31 +30,48 @@ int main(void)
     display = so1602a_open(i2c0, SO1602A_I2C_ADDR);
     so1602a_setup(display, SO1602A_CONFIG);
 
-    char indicator[] = {'O', 'o'};
+    char indicator[16 + 1] = {0x00};
     char buf[32] = {0x00};
     double temp = 0.0;
+
+    enum status s = INIT;
     uint32_t c = 0;
+    int l = 0;
+    int i = 1;
 
     while(true) {
         if((c & 0x03) == 0) {
             temp = adt7410_get_temprature(sensor);
-            sprintf(buf, "%+3.2f\xF2\x43", temp); // +NN.NN℃
-            puts(buf);
+            snprintf(buf, 17, "Temp.%9.2f\xF2\x43", temp); // +NN.NN℃
+        }
+
+        if(s == INIT) {
+            so1602a_set_position(display, 0x00);
+            so1602a_send_data(display, (uint8_t *)"Initializing...", 15);
+            if(c > 2) {
+                s = RUNNING;
+            }
+        } else if (s == RUNNING) {
+            // so1602a_set_position(display, 0x00);
+            // so1602a_send_data(display, (uint8_t *)"Temp.", 5);
+
+            so1602a_set_position(display, 0x00);
+            so1602a_send_data(display, (uint8_t *)buf, (size_t)strlen((const char *)buf));
         }
 
         //
-        so1602a_set_position(display, 0x00);
-        so1602a_send_data(display, (uint8_t *)"Temperature:", 12);
+        memset(indicator, '-', 16);
+        indicator[l] = 'o';
+        so1602a_set_position(display, 0x20);
+        so1602a_send_data(display, (uint8_t *)indicator, 16);
 
-        so1602a_set_position(display, 0x0F);
-        so1602a_send_data(display, (uint8_t *)&indicator[(c & 1)], 1);
-
-        so1602a_set_position(display, 0x28);
-        so1602a_send_data(display, buf, (size_t)strlen(buf));
+        //
+        l += i;
+        c++;
+        if(c%15==0) i *= -1;
 
         //
         sleep_ms(1000);
-        c++;
     }
 
     adt7410_close(sensor);
